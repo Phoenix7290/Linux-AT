@@ -10,7 +10,7 @@ import asyncio
 def monte_carlo_partial(chunk_size: int) -> int:
     """Executa uma parte da simulação Monte Carlo (chunk)."""
     import random
-    random.seed(os.getpid() + int(time.time() * 1000) % 10000)  # seed mais robusta
+    random.seed(os.getpid() + int(time.time() * 1000) % 10000)
     hits = 0
     for _ in range(chunk_size):
         x = random.uniform(-1, 1)
@@ -44,7 +44,6 @@ def parallel_monte_carlo(
                 f"Hits:{hits}/{total} π_est:{pi_est:.6f}\n"
             )
 
-    # Limpa o arquivo de log
     open(logfile, "w").close()
 
     with mp.Pool(processes=num_workers) as pool:
@@ -78,7 +77,6 @@ def start_async_monitoring():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
-        # Correção principal: usar loop.create_task()
         tasks = [loop.create_task(monitoring_task(i)) for i in range(20)]
 
         try:
@@ -86,7 +84,6 @@ def start_async_monitoring():
         except KeyboardInterrupt:
             pass
         finally:
-            # Limpeza
             for task in tasks:
                 if not task.done():
                     task.cancel()
@@ -100,7 +97,7 @@ def start_async_monitoring():
         name="AsyncMonitor"
     )
     thread.start()
-    print("✅ 20 tarefas assíncronas (asyncio) iniciadas em background.")
+    print("20 tarefas assíncronas (asyncio) iniciadas em background.")
     return thread
 
 
@@ -124,7 +121,7 @@ if __name__ == "__main__":
     print(f"Monte Carlo - Total de amostras: {total_samples:,}")
     print(f"Workers: {args.num_workers} | Blocos: {args.n_tasks} | Chunk: {args.chunk_size}\n")
 
-    # ====================== SERIAL ======================
+    # Serial
     print("=== EXECUTANDO VERSÃO SERIAL ===")
     start_time = time.time()
     hits_serial = serial_monte_carlo(total_samples)
@@ -134,7 +131,7 @@ if __name__ == "__main__":
     print(f"Tempo total (wall clock): {serial_time:.2f} segundos")
     print(f"π estimado (serial): {pi_serial:.6f}\n")
 
-    # ====================== PARALELA ======================
+    # Paralela
     print("=== EXECUTANDO VERSÃO PARALELA ===")
     async_thread = start_async_monitoring()
 
@@ -152,7 +149,7 @@ if __name__ == "__main__":
     print(f"Tempo total (wall clock): {parallel_time:.2f} segundos")
     print(f"π estimado (paralelo): {pi_parallel:.6f}\n")
 
-    # ====================== COMPARAÇÃO ======================
+    # Comparacao
     print("=== COMPARAÇÃO FINAL ===")
     print(f"Serial   → {serial_time:6.2f}s | π = {pi_serial:.6f}")
     print(f"Paralelo → {parallel_time:6.2f}s | π = {pi_parallel:.6f}")
