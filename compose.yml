@@ -1,0 +1,16 @@
+services:
+  monte-carlo:
+    build: .
+    image: monte-carlo-pi:latest
+    
+    volumes:
+      - ./logs:/app/logs
+    
+    command: >
+      --n_tasks 200
+      --chunk_size 50000
+      --num_workers 8
+      --logfile /app/logs/montecarlo.log
+
+    stdin_open: true
+    tty: true
